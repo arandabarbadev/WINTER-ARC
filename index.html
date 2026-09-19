@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Winter Arc</title>
+  <meta name="description" content="Sigue tu winter arc: ejercicio, trabajo, estudio, lectura, sueño y móvil. Marca cada día y mira tu progreso de 9 semanas.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icono-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icono-180.png">
+  <meta name="theme-color" content="#0b0e14">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ===== Pantalla de login ===== -->
+  <div id="login" class="login oculto">
+    <div class="login-card">
+      <div class="login-copo">❄</div>
+      <h1>Winter Arc</h1>
+      <p class="login-sub">Tu racha de hábitos, día a día.<br>9 semanas para construirte.</p>
+      <button id="btn-entrar" class="btn btn-claro btn-grande">
+        <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"/><path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34A21.99 21.99 0 0 0 2 24c0 3.55.85 6.91 2.34 9.88l7.35-5.7z"/><path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"/></svg>
+        Entrar con Google
+      </button>
+      <p class="login-nota">Cada uno entra con su cuenta y ve solo sus datos.</p>
+    </div>
+  </div>
+
+  <!-- ===== App ===== -->
+  <div id="app" class="app oculto">
+    <header class="cabecera">
+      <div class="marca"><span class="marca-copo">❄</span> WINTER&nbsp;ARC</div>
+      <div class="cabecera-derecha">
+        <span id="estado" class="estado" title="Sincronización">●</span>
+        <button id="btn-salir" class="btn btn-fantasma btn-mini">Salir</button>
+      </div>
+    </header>
+
+    <nav class="pestanas">
+      <button id="tab-hoy" class="pestana activa">Hoy</button>
+      <button id="tab-progreso" class="pestana">9 semanas</button>
+    </nav>
+
+    <!-- ---- Sección HOY ---- -->
+    <main id="vista-hoy" class="vista">
+      <p id="fecha-hoy" class="fecha-hoy"></p>
+
+      <div id="contador" class="contador">
+        <span id="contador-num" class="contador-num">0</span>
+        <span class="contador-sep">/</span>
+        <span class="contador-total">6</span>
+        <span class="contador-texto">hábitos hoy</span>
+      </div>
+
+      <div id="toast" class="toast">«El camino al éxito está lleno de errores.»</div>
+
+      <section class="tarjetas" id="tarjetas"></section>
+
+      <section class="bloque">
+        <h2 class="bloque-titulo">Media de esta semana</h2>
+        <div id="media-semana" class="medias"></div>
+      </section>
+
+      <section class="bloque">
+        <h2 class="bloque-titulo">Media de este mes</h2>
+        <div id="media-mes" class="medias"></div>
+      </section>
+    </main>
+
+    <!-- ---- Sección PROGRESO ---- -->
+    <main id="vista-progreso" class="vista oculto">
+      <section class="bloque">
+        <h2 class="bloque-titulo">Tus 9 semanas</h2>
+        <p class="bloque-sub">Cada círculo es un día. Verde: 4 o más hábitos. Gris: menos.</p>
+        <div id="leyenda" class="leyenda">
+          <span class="leyenda-item"><span class="circulo-mini gris"></span> &lt; 4</span>
+          <span class="leyenda-item"><span class="circulo-mini nivel4"></span> 4</span>
+          <span class="leyenda-item"><span class="circulo-mini nivel5"></span> 5</span>
+          <span class="leyenda-item"><span class="circulo-mini nivel6"></span> 6</span>
+        </div>
+        <div class="grid9-wrap">
+          <div class="dias-cabecera"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+          <div id="grid9" class="grid9"></div>
+        </div>
+        <p id="resumen9" class="resumen9"></p>
+      </section>
+    </main>
+
+    <footer class="pie">Winter Arc · hecho con ❤ para el arc</footer>
+  </div>
+
+  <!-- ===== Modal de objetivo ===== -->
+  <div id="modal-fondo" class="modal-fondo oculto">
+    <div class="modal" role="dialog" aria-modal="true">
+      <h3 id="modal-titulo">Objetivo</h3>
+      <p id="modal-sub" class="modal-sub"></p>
+      <label class="modal-label" for="modal-input">Objetivo diario (horas)</label>
+      <input id="modal-input" type="number" min="0" step="0.5" inputmode="decimal">
+      <p id="modal-ayuda" class="modal-ayuda"></p>
+      <label class="modal-switch">
+        <input id="modal-hecho" type="checkbox">
+        <span class="interruptor"></span>
+        <span id="modal-hecho-texto">Marcar como hecho hoy</span>
+      </label>
+      <div class="modal-botones">
+        <button id="modal-cancelar" class="btn btn-fantasma">Cancelar</button>
+        <button id="modal-guardar" class="btn btn-verde">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+  <script>
+    // Registrar el service worker (solo funciona servido por https, como GitHub Pages)
+    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+</body>
+</html>
