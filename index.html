@@ -74,8 +74,8 @@
     <!-- ---- Sección PROGRESO ---- -->
     <main id="vista-progreso" class="vista oculto">
       <section class="bloque">
-        <h2 class="bloque-titulo">Tus 9 semanas</h2>
-        <p class="bloque-sub">Cada círculo es un día. Verde: 4 o más hábitos. Gris: menos.</p>
+        <h2 class="bloque-titulo">Tu winter arc</h2>
+        <p class="bloque-sub">Del 1 de noviembre al 1 de enero · <span id="rango-arc"></span></p>
         <div id="leyenda" class="leyenda">
           <span class="leyenda-item"><span class="circulo-mini gris"></span> &lt; 4</span>
           <span class="leyenda-item"><span class="circulo-mini nivel4"></span> 4</span>
@@ -83,8 +83,11 @@
           <span class="leyenda-item"><span class="circulo-mini nivel6"></span> 6</span>
         </div>
         <div class="grid9-wrap">
-          <div class="dias-cabecera"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
-          <div id="grid9" class="grid9"></div>
+          <div class="meses" id="meses"></div>
+          <div class="columnas-arc">
+            <div class="dias-cabecera" id="dias-cabecera"></div>
+            <div id="grid9" class="grid9"></div>
+          </div>
         </div>
         <p id="resumen9" class="resumen9"></p>
       </section>

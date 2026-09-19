@@ -87,6 +87,7 @@ const elTarjetas = $('tarjetas'), elContador = $('contador'), elContadorNum = $(
 const elToast = $('toast'), elFechaHoy = $('fecha-hoy');
 const elMediaSemana = $('media-semana'), elMediaMes = $('media-mes');
 const elGrid9 = $('grid9'), elResumen9 = $('resumen9');
+const elMeses = $('meses'), elDiasCabecera = $('dias-cabecera'), elRangoArc = $('rango-arc');
 const elModalFondo = $('modal-fondo'), elModalTitulo = $('modal-titulo'), elModalSub = $('modal-sub');
 const elModalInput = $('modal-input'), elModalAyuda = $('modal-ayuda'), elModalHecho = $('modal-hecho');
 const elModalHechoTexto = $('modal-hecho-texto');
@@ -201,20 +202,54 @@ function renderTablaMedias(contenedor, desde, hasta) {
   }
 }
 
-// ---- Grid de 9 semanas × 7 días ----
+// ---- Grid del winter arc: 9 semanas del 1 de noviembre al 1 de enero ----
+
+const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+const DIAS_SEMANA = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
+const FILAS_ARC = 9, COLUMNAS_ARC = 7; // 63 días: 1 nov → 2 ene (el 1 de enero incluido)
+
+// ¿Qué arc toca mostrar? El que empieza el 1 de noviembre:
+// en marcha (desde el 1-nov), el recién terminado (1-2 de enero) o el próximo.
+function inicioArc() {
+  const hoy = new Date();
+  const novEsteAnio = new Date(hoy.getFullYear(), 10, 1);
+  if (hoy >= novEsteAnio) return novEsteAnio;
+  if (hoy.getMonth() === 0 && hoy.getDate() <= 2) return new Date(hoy.getFullYear() - 1, 10, 1);
+  return novEsteAnio;
+}
 
 function renderGrid9() {
   const hoy = hoyISO();
-  const lunesActual = lunesDe(new Date());
-  const lunesInicial = sumarDias(lunesActual, -8 * 7); // 9 semanas en total
+  const inicio = inicioArc();
+  const fin = sumarDias(inicio, FILAS_ARC * COLUMNAS_ARC - 1);
+  const totalDias = FILAS_ARC * COLUMNAS_ARC;
+
+  // Rango visible: "1 nov 2026 → 2 ene 2027"
+  elRangoArc.textContent =
+    `${inicio.getDate()} ${MESES[inicio.getMonth()]} ${inicio.getFullYear()} → ` +
+    `${fin.getDate()} ${MESES[fin.getMonth()]} ${fin.getFullYear()}`;
+
+  // Cabecera: el día de la semana depende del día en que caiga el 1 de noviembre
+  elDiasCabecera.innerHTML = '';
+  const primerDia = inicio.getDay(); // 0 = domingo
+  for (let c = 0; c < COLUMNAS_ARC; c++) {
+    const letra = document.createElement('span');
+    letra.textContent = DIAS_SEMANA[(primerDia + c) % 7];
+    elDiasCabecera.appendChild(letra);
+  }
 
   elGrid9.innerHTML = '';
+  elMeses.innerHTML = '';
   let diasTranscurridos = 0, diasLogrados = 0;
 
-  for (let fila = 0; fila < 9; fila++) {
-    const lunesFila = sumarDias(lunesInicial, fila * 7);
-    for (let col = 0; col < 7; col++) {
-      const fecha = sumarDias(lunesFila, col);
+  for (let fila = 0; fila < FILAS_ARC; fila++) {
+    // Etiqueta del mes a la izquierda de cada fila
+    const etiqueta = document.createElement('span');
+    etiqueta.textContent = MESES[sumarDias(inicio, fila * COLUMNAS_ARC).getMonth()];
+    elMeses.appendChild(etiqueta);
+
+    for (let col = 0; col < COLUMNAS_ARC; col++) {
+      const fecha = sumarDias(inicio, fila * COLUMNAS_ARC + col);
       const iso = aISO(fecha);
       const n = hechosDe(iso);
 
@@ -223,11 +258,9 @@ function renderGrid9() {
       if (iso > hoy) c.classList.add('futuro');
       if (iso === hoy) c.classList.add('hoy');
       if (n >= UMBRAL_EXITO) c.classList.add('n' + Math.min(n, 6));
+      c.title = `${fecha.getDate()} ${MESES[fecha.getMonth()]} · ${n} de ${HABITOS.length} hábitos`;
 
-      const diaMes = fecha.getDate();
-      c.title = `${iso} · ${n} de ${HABITOS.length} hábitos`;
-
-      if (iso <= hoy) {
+      if (iso <= hoy && iso >= aISO(inicio)) {
         diasTranscurridos++;
         if (n >= UMBRAL_EXITO) diasLogrados++;
       }
@@ -236,7 +269,16 @@ function renderGrid9() {
     }
   }
 
-  elResumen9.innerHTML = `Días con ${UMBRAL_EXITO}+ hábitos: <strong>${diasLogrados} de ${diasTranscurridos}</strong>`;
+  // Resumen según el momento del arc
+  const parte = `Días con ${UMBRAL_EXITO}+ hábitos: <strong>${diasLogrados} de ${diasTranscurridos}</strong>`;
+  if (hoy < aISO(inicio)) {
+    elResumen9.innerHTML = `El arc empieza el 1 de noviembre. ${parte}`;
+  } else if (hoy > aISO(fin)) {
+    elResumen9.innerHTML = `Arc terminado. ${parte} de ${totalDias}`;
+  } else {
+    const quedan = totalDias - diasTranscurridos;
+    elResumen9.innerHTML = `${parte} · quedan ${quedan} días de arc`;
+  }
 }
 
 // ---- Modal de objetivo ----
